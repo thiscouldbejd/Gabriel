@@ -20,6 +20,6 @@ It is licensed under version 2.0 of the Apache License and contains code (thanks
 |Underscore|[Website](http://underscorejs.org)|Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors|MIT License|
 |js-yaml.min.gs|[Github Repo](https://github.com/nodeca/js-yaml)|Copyright (C) 2011-2015 by Vitaly Puzrin|MIT License|
 
-The logo incorporates the [Markdown Mark](https://github.com/dcurtis/markdown-mark) which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).
+The __logo__ incorporates the [Markdown Mark](https://github.com/dcurtis/markdown-mark) which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).
 
-All else, Copyright JD, 2015.
+All else, __Copyright JD, 2015__.
