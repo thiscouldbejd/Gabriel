@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<?!= HtmlService.createHtmlOutputFromFile("SidebarStylesheet").getContent(); ?>
+<? var docId = DocumentApp.getActiveDocument().getId(); ?>
+
+<div id="root" class="sidebar" data-id="<?= docId ?>">
+    <div class="block form-group">
+      <label for="title-text">Title:</label>
+      <textarea class="width-100" id="title-text" rows="1" /></textarea>
+      <button class="action inflow" id="sidebar-generate-button">Generate</button>
+      <button class="action inflow" id="sidebar-meta-button">Meta</button>
+    </div>
+    <div class="block form-group">
+      <label for="file-name-text">File Name:</label>
+      <textarea class="width-100" id="file-name-text" rows="1" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="link-text">Link:</label>
+      <textarea class="width-100" id="link-text" rows="1" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="type-text">Type:</label>
+      <textarea class="width-100" id="type-text" rows="1" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="author-text">Author:</label>
+      <textarea class="width-100" id="author-text" rows="1" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="arbitary-yaml">Extra YAML:</label>
+      <textarea class="width-100" id="arbitary-yaml" rows="1" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="tags">Tags:</label>
+      <ul class="width-100" id="tags"></ul>
+      <input type="text" class="width-100" id="new-tag" /></textarea>
+    </div>
+    <div class="block form-group">
+      <label for="commit-to-repos">Commit To:</label>
+      <ul class="width-100 readonly" id="commit-to-repos"></ul>
+    </div>
+    <div class="block form-group">
+      <label for="repos">Your GitHub Repos:</label>
+      <ul class="width-100 expandable" id="repos"></ul>
+    </div>
+    <div class="block" id="sidebar-button-bar">
+      <button class="action" id="sidebar-save-button">Save</button>
+      <label id="sidebar-status" for="sidebar-save-button"></label>
+    </div>
+</div>
+
+<?!= HtmlService.createHtmlOutputFromFile("SidebarJavaScript").getContent(); ?>
