@@ -1,0 +1,147 @@
+<!-- This CSS package applies Google styling; it should always be included. -->
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+
+<style>
+
+.sidebar {
+  width: 96%;
+}
+
+.loading, .readonly {
+  color: #aaa;
+}
+
+.readonly li {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+
+ul.readonly { 
+  list-style: lower-greek;
+}
+
+.highlight {
+  font-weight: bold;
+}
+
+.success {
+  color: green;
+}
+
+.failure {
+  color: red;
+}
+
+label {
+  font-weight: bold;
+}
+
+button {
+  min-width: 100px;
+}
+
+button.inflow {
+  margin-top: 0.25em;
+}
+
+.width-100 {
+  width: 100%;
+  box-sizing: border-box;
+  -webkit-box-sizing : border-box;‌
+  -moz-box-sizing : border-box;
+}
+
+.table-label {
+  font-weight: bold;
+  width: 25%
+}
+
+.branding-below {
+  bottom: 54px;
+  top: 0;
+}
+
+.branding-text {
+  left: 7px;
+  position: relative;
+  top: 3px;
+}
+
+.logo {
+  vertical-align: middle;
+}
+
+#dialog-elements {
+  background-color: #eee;
+  border-color: #eee;
+  border-width: 5px;
+  border-style: solid;
+}
+
+#sidebar-button-bar,
+#dialog-button-bar,
+#dialog-elements {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+ul {
+    margin: 0.1em 0;
+    padding: 0 1em;
+    list-style: none;
+}
+
+li > ul {
+    margin: 0.1em 0;
+    padding: 0 0.75em;
+}
+
+li > input {
+  padding-left: 0.2em;
+}
+
+ul.expandable li {
+  cursor: pointer;
+}
+
+ul.expandable li:before { 
+  content: "";
+  border-style: solid;
+  display: block;
+  height: 0;
+  width: 0;
+  left: -1em;
+  top: 0.9em;
+  position: relative;
+  border-color: transparent #111;
+  border-width: 0.35em 0 0.35em 0.45em;
+  -webkit-transition: all 0.15s ease-out;
+  -moz-transition: all 0.15s ease-out;
+  -o-transition: all 0.15s ease-out;
+  transition: all 0.15s ease-out;
+}
+
+ul.expandable li.empty:before {
+  border-color: transparent #F00;
+}
+
+ul.expandable li:hover:before {
+  border-color: transparent #aaa;
+  -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
+  transform:rotate(90deg);
+}
+
+ul.expandable li.empty:hover:before {
+  border-color: transparent #F77;
+}
+
+ul.expandable li.expanded:before {
+ -webkit-transform:rotate(90deg);
+  -moz-transform:rotate(90deg);
+  -o-transform:rotate(90deg);
+  transform:rotate(90deg);
+}
+
+</style>
