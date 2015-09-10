@@ -1,0 +1,483 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+  var current_Targets = [];
+  var all_Tags = [];
+  var current_Tags = [];
+  
+  /**
+   * Run initializations on sidebar load.
+   */
+  $(function() {
+    
+    // Handler for Change Checkbox Function (keeping track of targets!)
+    $(document).on("change" , "input[type='checkbox'].repos" , onRepoCheckChange);
+    $(document).on("change" , "input[type='checkbox'].tags" , onTagCheckChange);
+    
+    // Handler for Generate Button on Side Bar
+    $("#sidebar-generate-button").click(onGenerate);
+    
+    // Handler for Meta Button on Side Bar
+    $("#sidebar-meta-button").click(function () {
+      google.script.run.showDialog(generateMetadata(), "YAML Front-Matter / Metadata")
+    });
+    
+    // Handler for Saving Button on Side Bar
+    $("#sidebar-save-button").click(function() {
+      showStatus("");
+      $('#sidebar-save-button').disabled = true;
+      saveTitle([saveFileName, saveLink, saveType, saveAuthor, saveTags, saveTargets, commitDocument, afterSaveSuccess], afterSaveFailure);
+    });
+    
+    $("#new-tag").on("keyup", function(e) {
+        if (e.keyCode == 13) {
+          addTag($("#new-tag").val());
+          $("#new-tag").val("")
+          return false; // prevent the button click from happening
+        }
+    });
+
+    // Begin A-Sync Load Chain!
+    loadTags([loadTitle, loadFileName, loadLink, loadType, loadAuthor, loadAllTags, loadTargets, loadRepos]);
+   
+  });
+  
+  function addTag(value) {
+    var success = false;
+    var index = all_Tags.indexOf(value);
+    if (index < 0) {
+      all_Tags.push(value);
+      google.script.run
+        .withSuccessHandler(function() {
+          showTags(all_Tags);
+          success = true;
+        })
+        .withFailureHandler(showError)
+        .setAllTags(all_Tags);
+      }
+    return success;
+  }
+  
+  function loadTags(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(tags) {
+        current_Tags = tags;
+        
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+        
+      })
+      .withFailureHandler(showError)
+      .getTags();
+  }
+  
+  function loadAllTags(successfulChainFunctions) {
+    showLoading($("#tags"), "Tags");
+    google.script.run
+      .withSuccessHandler(function(tags) {
+        all_Tags = tags;
+        showTags(tags);
+        
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+        
+      })
+      .withFailureHandler(showError)
+      .getAllTags();
+  }
+  
+  function loadTitle(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(value) {
+        $("#title-text").val(value);
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+      })
+      .withFailureHandler(showError)
+      .getTitle();
+  }
+  
+  function loadFileName(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(value) {
+        $("#file-name-text").val(value);
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+      })
+      .withFailureHandler(showError)
+      .getFileName();
+  }
+  
+  function loadLink(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(value) {
+        $("#link-text").val(value);
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+      })
+      .withFailureHandler(showError)
+      .getPermalink();
+  }
+  
+  function loadType(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(value) {
+        $("#type-text").val(value);
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+      })
+      .withFailureHandler(showError)
+      .getType();
+  }
+  
+  function loadAuthor(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(value) {
+        $("#author-text").val(value);
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+      })
+      .withFailureHandler(showError)
+      .getAuthor();
+  }
+  
+  function loadTargets(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(targets) {
+        current_Targets = targets;
+        showTargets(targets);
+        
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+        
+      })
+      .withFailureHandler(showError)
+      .getTargets();
+  }
+  
+  function loadRepos(successfulChainFunctions) {
+    showLoading($("#repos"), "Repos");
+    google.script.run
+      .withSuccessHandler(function(repos, element) {
+          element.empty();
+          for (var i = 0; i < repos.length; i++) {
+            $("<li/>")
+              .click(folderClick)
+              .data("path", "")
+              .data("repo_name", repos[i].fullname)
+              .append($("<input />").addClass("repos").attr("type","checkbox").attr("checked", (current_Targets.indexOf(repos[i].fullname + "::") >= 0)))
+              .append($("<span />").text(repos[i].name).click(folderClick))
+              .appendTo(element);
+          }
+        })
+      .withFailureHandler(showError)
+      .withUserObject($("#repos"))
+      .getRepos();
+  }
+
+  function onRepoCheckChange() {
+    var parent = $(this).parent();
+    var data = parent.data("repo_name") + "::" + parent.data("path");
+    if(this.checked) {
+      current_Targets.push(data);
+    } else {
+      var index = current_Targets.indexOf(data);
+      if (index > -1) current_Targets.splice(index, 1);
+    }
+    showTargets(current_Targets);
+  }
+  
+  function onTagCheckChange() {
+    var parent = $(this).parent();
+    var data = parent.data("name");
+    var index = current_Tags.indexOf(data);
+    if(this.checked) {
+      if (index < 0) current_Tags.push(data);
+    } else {
+      if (index > -1) current_Tags.splice(index, 1);
+    }
+  }
+  
+  function showTargets(targets) {
+    var commitTo = $("#commit-to-repos").empty();
+    for (var i = 0; i < targets.length; i++) {
+      $("<li/>").text(targets[i]).appendTo(commitTo);
+    }
+  }
+  
+ function showTags(tags) {
+    var tagList = $("#tags").empty();
+    for (var i = 0; i < tags.length; i++) {
+      $("<li/>")
+        .data("name", tags[i])
+        .append($("<input />").addClass("tags").attr("type","checkbox").attr("checked", (current_Tags.indexOf(tags[i]) >= 0)))
+        .append($("<span />").text(tags[i]))
+        .appendTo(tagList);
+    }
+  }
+  
+  function onGenerate() {
+    var title = $("#title-text").val().split(" ").join("-");
+    $("#link-text").val("/" + title.toLowerCase() + "/");
+    var file = new Date().toISOString().split("T")[0] + "-" + title + ".md";
+    $("#file-name-text").val(file.toLowerCase());
+  }
+  
+  /**
+   * Calls the server to modify the document.
+   * Replaces the document footer text; formatting and styles will
+   * not be preserved.
+   */
+  function onSave() {
+    $('#sidebar-save-button').disabled = true;
+    saveTitle([saveTargets, saveTags, afterSaveSuccess], afterSaveFailure);
+  }
+  
+  function afterSaveSuccess(successfulChainFunctions, failedChainFunction) {
+    $('#sidebar-save-button').disabled = false;
+    showStatus("Saved", "success");
+  }
+  
+  function afterSaveFailure() {
+    $('#sidebar-save-button').disabled = false;
+    showStatus("Failed", "failure");
+  }
+  
+ function saveTitle(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setTitle($('#file-title-text').val());
+  }
+  
+   function saveFileName(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setFileName($("#file-name-text").val());
+  }
+  
+  function saveLink(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setPermalink($("#link-text").val());
+  }
+  
+  function saveType(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setType($("#type-text").val());
+  }
+  
+  function saveAuthor(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setAuthor($("#author-text").val());
+  }
+  
+  function saveTargets(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setTargets(current_Targets);
+  }
+  
+  function saveTags(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .setTags(current_Tags);
+  }
+
+  function commitDocument(successfulChainFunctions, failedChainFunction) {
+    google.script.run
+      .withSuccessHandler(function() {
+      
+        // -- Continue the Chain -- //
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) {
+          var successfulChainFunction = successfulChainFunctions.shift();
+          successfulChainFunction(successfulChainFunctions, failedChainFunction);
+        }
+        
+      })
+      .withFailureHandler(function(element) {
+        showError();
+        if (failedChainFunction) failedChainFunction(element)
+      })
+      .withUserObject(this)
+      .commitToGithub(generateMetadata());
+  }
+  
+  /**
+   * Displays the given status message in the sidebar.
+   *
+   * @param {String} msg The status message to display.
+   * @param {String} classId The message type (class id) that the message
+   *   should be displayed as.
+   */
+  function showStatus(msg, classId) {
+    $('#sidebar-status').removeClass().html(msg);
+    if (classId) {
+      $('#sidebar-status').addClass(classId);
+    }
+  }
+  
+  function showLoading(element, what) {
+    element.empty();
+    var message = "Loading ";
+    if (what) message = message + what + " ";
+    $("<li/>").addClass("loading").text(message += "...").appendTo(element);
+  }
+  
+  function showError(msg, element) {
+    if (element) element.empty();
+    showStatus(msg, 'error');
+  }
+  
+  function folderClick(event) {
+    if (this == event.target) {
+      var target = $(this);
+      if (target.prop("tagName").toUpperCase() != "LI") target = target.parent();
+      target.toggleClass("expanded");
+      if (target.hasClass("expanded")) {
+        showLoading($("<ul/>").appendTo(target), "Folders");
+        google.script.run
+          .withSuccessHandler(function(folders, element) {
+            element.empty();
+              for (var i = 0; i < folders.length; i++) {
+                if (folders[i].type == "folder") {
+                  var name_Span = $("<span />").text(folders[i].name).click(folderClick);
+                  if (folders[i].name.indexOf("posts") >= 0) name_Span.addClass("highlight");
+                  $("<li/>")
+                    .click(folderClick)
+                    .data("path", folders[i].path)
+                    .data("repo_name", target.data("repo_name"))
+                    .append($("<input />").addClass("repos").attr("type","checkbox").attr("checked", (current_Targets.indexOf(target.data("repo_name") + "::" + folders[i].path) >= 0)))
+                    .append(name_Span)
+                    .appendTo(element);
+                }
+              }
+              if (element.children().length == 0) {
+                element.parent().toggleClass("expanded");
+                element.parent().addClass("empty");
+                element.remove();
+              } else {
+                element.parent().parent().removeClass("empty");
+              }
+          })
+          .withFailureHandler(showError)
+          .withUserObject(target.children("ul"))
+          .getFolders(target.data("repo_name"), target.data("path"));
+       } else {
+         target.children("ul").remove();
+       }
+    }
+  }
+  
+  function generateMetadata() {
+    var value = "---\n";
+    
+    if ($("#title-text").val()) value = value.concat("title: ", $("#title-text").val(), "\n");
+    if ($("#type-text").val()) value = value.concat("layout: ", $("#type-text").val(), "\n");
+    if ($("#author-text").val()) value = value.concat("author: ", $("#author-text").val(), "\n");
+    if ($("#link-text").val()) value = value.concat("permalink: ", $("#link-text").val(), "\n");
+    
+    if (current_Tags && current_Tags.length > 0) {
+      value = value.concat("tags:", "\n");
+      for (var i = 0; i < current_Tags.length; i++) {
+        value = value.concat("- ", current_Tags[i].toLowerCase(), "\n");
+      }
+    }
+    
+    if ($("#arbitary-yaml").val()) value = value.concat($("#arbitary-yaml").val(), "\n")
+    if ($("#root").data("id")) value = value.concat("source-id: ", $("#root").data("id"), "\n")
+    
+    return value.concat("published: true\n", "---");
+  }
+</script>
