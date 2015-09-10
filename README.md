@@ -10,6 +10,9 @@ It allows for simple permalinks, tagging and titles. You can also submit arbitar
 ##Usage
 You can download the code yourself for modification/testing/usage/debugging or grab it from the Google Web Store.
 
+##Naming
+[Gabriel](https://en.wikipedia.org/wiki/Gabriel), 'The Markdown Angel' to make generating a publishing Markdown easier for non-technical or non-confident users. Named with a nod to [Jekyll & Hyde](https://en.wikipedia.org/wiki/Strange_Case_of_Dr_Jekyll_and_Mr_Hyde) as it is mainly used in conjunction with a Jekyll / Github-Pages repository on Github.
+
 ##Licensing
 It is licensed under version 2.0 of the Apache License and contains code (thanks!) from the following projects (any alterations or modifications are marked in the code):
 
