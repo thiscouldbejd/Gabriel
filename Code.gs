@@ -128,7 +128,7 @@ function setType(value) {
  * @return {String} the current post author.
  */
 function getAuthor() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, Session.getActiveUser().getEmail().split("@")[0]);
+  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, Session.getEffectiveUser().getEmail().split("@")[0]);
 }
 
 /**
