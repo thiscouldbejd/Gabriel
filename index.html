@@ -18,94 +18,106 @@
       <div class="inner">
 
         <header>
-          <h1>Gabriel</h1>
-          <h2>Gabriel - The Markdown Angel for Google Docs</h2>
+            <h1>Gabriel</h1>
+            <h2>Gabriel - The Markdown Angel for Google Docs</h2>
         </header>
 
         <section id="downloads" class="clearfix">
-          <a href="https://github.com/thiscouldbejd/Gabriel/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
-          <a href="https://github.com/thiscouldbejd/Gabriel/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/thiscouldbejd/Gabriel" id="view-on-github" class="button"><span>View on GitHub</span></a>
+            <a href="https://github.com/thiscouldbejd/Gabriel/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+            <a href="https://github.com/thiscouldbejd/Gabriel/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+            <a href="https://github.com/thiscouldbejd/Gabriel" id="view-on-github" class="button"><span>View on GitHub</span></a>
         </section>
 
         <hr>
 
         <section id="main_content">
-          <h1>
-<a id="gabriel" class="anchor" href="#gabriel" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gabriel</h1>
+            <h1><a id="gabriel" class="anchor" href="#gabriel" aria-hidden="true"><span class="octicon octicon-link"></span></a>Gabriel</h1>
 
-<h2>
-<a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
+            <h2><a id="overview" class="anchor" href="#overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overview</h2>
 
-<p>Post Google-Docs To GitHub-Pages with Gabriel (The Markdown Angel).</p>
+            <p>Post Google-Docs To GitHub-Pages with Gabriel (The Markdown Angel).</p>
 
-<p>This is a simple Google Apps 'Add-On' which converts a Google Doc to Markdown, then commits it (together with any associated images) to a Github Repo. Particularly useful for those using Github-Pages to host Jekyll Blogs yet wish to author posts in Google Docs.</p>
+            <p>This is a simple Google Apps 'Add-On' which converts a Google Doc to a text based format called <a href="http://daringfireball.net/projects/markdown/" target="_blank">Markdown</a>. It adds a <a href="https://jekyllrb.com/docs/frontmatter/">little metadata</a> (in YAML format) about the document (e.g. a title, author, categories/tags) and commits it (together with any associated images) to a Github Repository (repo).</p>
 
-<p>It allows for simple permalinks, tagging and titles. You can also submit arbitary YAML if you're doing custom things in Jekyll. All Gabriel related metadata is stored in the DocumentProperties of the document, making it ideal for collaboration.</p>
+            <p>It is aimed at users who have a Github-Pages/Jekyll blog/site hosted on Github but are not especially familiar with the Markdown format, or the technicalities of GitHub 'commits'. It's also very useful for Chromebook/Chromebox users who want to be able to draft/save/edit/publish blog posts without locally installed Git tools. For information about how to create a Blog site using Jekyll (hosted for free on Github) please have a quick look at the following links, or simply Google for 'creating a jekyll blog on Github'!</p>
 
-<h2>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+            <ul>
+                <li><a href="http://jmcglone.com/guides/github-pages/" target="_blank">http://jmcglone.com/guides/github-pages/</a></li>
+                <li><a href="https://github.com/barryclark/jekyll-now" target="_blank">https://github.com/barryclark/jekyll-now</a></li>
+                <li><a href="http://joshualande.com/jekyll-github-pages-poole/" target="_blank">http://joshualande.com/jekyll-github-pages-poole/</a></li>
+                <li><a href="http://www.smashingmagazine.com/2014/08/build-blog-jekyll-github-pages/" target="_blank">http://www.smashingmagazine.com/2014/08/build-blog-jekyll-github-pages/</a></li>
+                <li><a href="https://jekyllrb.com/" target="_blank">https://jekyllrb.com/</a></li>
+            </ul>
+            
+            <p>Gabriel essentially lets you use Google Docs as a simple content authoring system for your blog. Ordinarily, you would author blog posts (in Markdown) on your local computer (then use the Github Command Line Interface or GUI Application to push them to Github) or on the Github website directly (which won't allow you to save your draft whilst working on it). With Gabriel, you can author each post as a document in Google Docs, including tables, links, headers and images. When you're ready to publish it, simply 'save' it to Github and all the technicalities of conversion and publishing are taken care of. If you need to update the post in the future, you can simply make any content change you wish and re-save it, updating the published versions.</p>
+    
+            <p>It allows for simple permalinks, tagging and titles. You can also submit arbitary YAML if you're doing custom things in Jekyll. All Gabriel related metadata is stored in the DocumentProperties of the document, making it ideal for collaboration (e.g. the settings for each document follow each document, rather than the user).</p>    
+            
+            <p>You can also publish to simultaneous blogs/repos at the same time, making cross-posting much faster and easier.</p>
 
-<p>You can download the code yourself for modification/testing/usage/debugging or grab it from the <a href="https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff">Google Web Store</a>. Please note that this code is currently in late-alpha/early-beta. It's functional but a little rough around the edges (especially in handling the OAuth flow to Github).</p>
+            <h2><a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<h2>
-<a id="naming" class="anchor" href="#naming" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naming</h2>
+            <p>To use this add-on, you'll need to have a Github account already set up, and ideally your Jekyll-based blog already set up and running (although this is a recommendation, not a requirement). To set up an account, just visit 'https://github.com' and sign up. Once you've done this, the first time you run this add-on, you'll need to authorise it to talk to Github on your behalf. This involves clicking on the link that will appear in the side bar and following the on-screen instructions (Github will ask you to grant 'Gabriel - The Markdown Angel' access to your repositories and to author files within them). If you grant this (which you will need to do for the add-on to work) then you will have to close and re-open the sidebar. Once this is done, you'll be ready to go!</p>
+            
+            <p>You can download the code yourself (download links above, or fork from the <a href="https://github.com/thiscouldbejd/Gabriel">repository</a>) for modification/testing/usage/debugging or grab it from the <a href="https://chrome.google.com/webstore/detail/gabriel-the-markdown-ange/okimajjeocnndpifeelaajdebkkbckff">Google Web Store</a>. Please note that this code is currently in late-alpha/early-beta. It's functional but a little rough around the edges (especially in handling the OAuth flow to Github).</p>
 
-<p><a href="https://en.wikipedia.org/wiki/Gabriel">Gabriel</a>, 'The Markdown Angel' to make generating a publishing Markdown easier for non-technical or non-confident users. Named with a nod to <a href="https://en.wikipedia.org/wiki/Strange_Case_of_Dr_Jekyll_and_Mr_Hyde">Jekyll &amp; Hyde</a> as it is mainly used in conjunction with a Jekyll / Github-Pages repository on Github.</p>
+            <h2><a id="naming" class="anchor" href="#naming" aria-hidden="true"><span class="octicon octicon-link"></span></a>Naming</h2>
 
-<h2>
-<a id="licensing" class="anchor" href="#licensing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
+            <p><a href="https://en.wikipedia.org/wiki/Gabriel">Gabriel</a>, 'The Markdown Angel' to make generating a publishing Markdown easier for non-technical or non-confident users. Named with a nod to <a href="https://en.wikipedia.org/wiki/Strange_Case_of_Dr_Jekyll_and_Mr_Hyde">Jekyll &amp; Hyde</a> as it is mainly used in conjunction with a Jekyll / Github-Pages repository on Github.</p>
 
-<p>It is licensed under version 2.0 of the Apache License and contains code (thanks!) from the following projects (any alterations or modifications are marked in the code):</p>
+            <h2><a id="licensing" class="anchor" href="#licensing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licensing</h2>
 
-<table>
-<thead>
-<tr>
-<th>File</th>
-<th>From</th>
-<th>Copyright</th>
-<th>License</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>OAuth2.gs</td>
-<td><a href="https://github.com/googlesamples/apps-script-oauth2">Github Repo</a></td>
-<td>Copyright 2014 Google Inc. All Rights Reserved.</td>
-<td>Apache License, Version 2.0</td>
-</tr>
-<tr>
-<td>Markdown.gs</td>
-<td><a href="https://github.com/mangini/gdocs2md">Github Repo</a></td>
-<td>Copyright 2013 Google Inc. All Rights Reserved.</td>
-<td>Apache License, Version 2.0</td>
-</tr>
-<tr>
-<td>Underscore</td>
-<td><a href="http://underscorejs.org">Website</a></td>
-<td>Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors</td>
-<td>MIT License</td>
-</tr>
-<tr>
-<td>js-yaml.min.gs</td>
-<td><a href="https://github.com/nodeca/js-yaml">Github Repo</a></td>
-<td>Copyright (C) 2011-2015 by Vitaly Puzrin</td>
-<td>MIT License</td>
-</tr>
-</tbody>
-</table>
+            <p>It is licensed under version 2.0 of the Apache License and contains code (thanks!) from the following projects (any alterations or modifications are marked in the code):</p>
 
-<p>The <strong>logo</strong> incorporates the <a href="https://github.com/dcurtis/markdown-mark">Markdown Mark</a> which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>From</th>
+                        <th>Copyright</th>
+                        <th>License</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>OAuth2.gs</td>
+                        <td><a href="https://github.com/googlesamples/apps-script-oauth2">Github Repo</a></td>
+                        <td>Copyright 2014 Google Inc. All Rights Reserved.</td>
+                        <td>Apache License, Version 2.0</td>
+                    </tr>
+                    <tr>
+                        <td>Markdown.gs</td>
+                        <td><a href="https://github.com/mangini/gdocs2md">Github Repo</a></td>
+                        <td>Copyright 2013 Google Inc. All Rights Reserved.</td>
+                        <td>Apache License, Version 2.0</td>
+                    </tr>
+                    <tr>
+                        <td>Underscore</td>
+                        <td><a href="http://underscorejs.org">Website</a></td>
+                        <td>Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters &amp; Editors</td>
+                        <td>MIT License</td>
+                    </tr>
+                    <tr>
+                        <td>js-yaml.min.gs</td>
+                        <td><a href="https://github.com/nodeca/js-yaml">Github Repo</a></td>
+                        <td>Copyright (C) 2011-2015 by Vitaly Puzrin</td>
+                        <td>MIT License</td>
+                    </tr>
+                </tbody>
+            </table>
 
-<p>All else, <strong>Copyright JD, 2015</strong>.</p>
+            <p>The <strong>logo</strong> incorporates the <a href="https://github.com/dcurtis/markdown-mark">Markdown Mark</a> which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).</p>
+
+            <p>All else, <strong>Copyright JD, 2015</strong>.</p>
+        
         </section>
 
         <footer>
-          Gabriel is maintained by <a href="https://github.com/thiscouldbejd">thiscouldbejd</a><br>
-          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+            Gabriel is maintained by <a href="https://github.com/thiscouldbejd">thiscouldbejd</a><br>
+            This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
         </footer>
 
-                  <script type="text/javascript">
+        <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
