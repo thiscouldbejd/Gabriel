@@ -89,6 +89,8 @@ header h2 {
 
 header img {
   float: left;
+  width: 100px;
+  height: 100px;
 }
 
 #container {
