@@ -18,11 +18,13 @@ limitations under the License.
 Modifications made to code to:
 - remove emailing sections in 'ConvertToMarkdown' function;
 - add assets_Path parameter to 'ConvertToMarkdown' function and into processParagraph, allowing image paths in Jekyll;
+- add assets_Namespace parameter to 'ConvertToMarkdown' and into processParagraph, ensuring no namespace clashes when adding image assets;
+- replacing apostrophes / single-quotation marks
 
 Original version can be found at: https://github.com/mangini/gdocs2md
 */
 
-function ConvertToMarkdown(assets_Path) {
+function ConvertToMarkdown(assets_Path, assets_Namespace) {
   if (assets_Path) {
     assets_Path = "{{ site.url }}/" + assets_Path + "/";
   } else {
@@ -45,7 +47,7 @@ function ConvertToMarkdown(assets_Path) {
   // Walk through all the child elements of the doc.
   for (var i = 0; i < numChildren; i++) {
     var child = DocumentApp.getActiveDocument().getActiveSection().getChild(i);
-    var result = processParagraph(i, child, inSrc, globalImageCounter, globalListCounters, assets_Path);
+    var result = processParagraph(i, child, inSrc, globalImageCounter, globalListCounters, assets_Path, assets_Namespace);
     globalImageCounter += (result && result.images) ? result.images.length : 0;
     if (result!==null) {
       if (result.sourcePretty==="start" && !inSrc) {
@@ -97,7 +99,7 @@ function escapeHTML(text) {
 }
 
 // Process each child element (not just paragraphs).
-function processParagraph(index, element, inSrc, imageCounter, listCounters, assets_Path) {
+function processParagraph(index, element, inSrc, imageCounter, listCounters, assets_Path, assets_Namespace) {
   // First, check for things that require no processing.
   if (element.getNumChildren()==0) {
     return null;
@@ -111,7 +113,8 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters, ass
   var result = {};
   var pOut = "";
   var textElements = [];
-  var imagePrefix = "image_";
+  var imagePrefix = "img_";
+  if (assets_Namespace) imagePrefix = assets_Namespace + "_" + imagePrefix;
   
   // Handle Table elements. Pretty simple-minded now, but works for simple tables.
   // Note that Markdown does not process within block-level HTML, so it probably 
@@ -203,8 +206,10 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters, ass
       pOut += processTextElement(inSrc, textElements[i]);
     }
 
-    // replace Unicode quotation marks
+    // replace Unicode Double-quotation marks
     pOut = pOut.replace('\u201d', '"').replace('\u201c', '"');
+    // replace Unicode apostrophes/Single-quotation marks
+    pOut = pOut.replace("\u2018", "'").replace("\u2019", "'");
  
     result.text = prefix+pOut;
   }
