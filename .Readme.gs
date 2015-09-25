@@ -213,6 +213,10 @@
 // == Version History == //
 
 /*
+v1.0.3 [2015-09-25]
+    - Various minor bugfixes - see Github Issues Tracker
+v1.0.2 [2015-09-19]
+    - Updates incorporated feedback from Ben@Google
 v1.0.1 [2015-09-10]
 v1.0.0 [2015-09-06] (Google Apps Version = v1)
     - Initial Version
