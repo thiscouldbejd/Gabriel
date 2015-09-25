@@ -25,7 +25,7 @@ function onOpen(e) {
 
 function createMenu(ui) {
   ui.createAddonMenu()
-    .addItem("Run", "showSidebar")
-    .addItem("Clear", "clearData")
+    .addItem("Start Publishing", "showSidebar")
+    .addItem("Clear Document Info", "clearData")
     .addToUi();
 }
