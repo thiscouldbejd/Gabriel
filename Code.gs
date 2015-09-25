@@ -31,7 +31,7 @@ function showSidebar() {
  */
 function clearData() {
   var ui = DocumentApp.getUi();
-  var response = ui.alert("Confirmation Required", "Are you5 sure you want to clear configuration?", ui.ButtonSet.YES_NO)
+  var response = ui.alert("Clear Information about this document?", "You will lose all the information you've edited in the sidebar, but your document will remain exactly as it is.", ui.ButtonSet.YES_NO)
   
   if (response && response == "YES") clearPrefixedProperties(PropertiesService.getDocumentProperties(), c, "data_");
 }
@@ -222,23 +222,31 @@ function commitToGithub(yaml_Metadata) {
           if (config_Doc[c.defaults_ymlAssetPathKey]) assets_Path = config_Doc[c.defaults_ymlAssetPathKey];
         }
         
-        var markdown_Document = ConvertToMarkdown(assets_Path);
-        if (markdown_Document) {
-          markdown_Document.contents = yaml_Metadata + "\n" + markdown_Document.contents;
-    
-          var repo_Path = targets[i].split("::")[1];
-          var repo_File = getFileName();
-          var file = postCommit(repo_Name, repo_Path, repo_File, "Update/Create " + repo_File, Utilities.base64Encode(markdown_Document.contents));
+        var repo_File = getFileName();
+        var repo_FileKey = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, repo_File, Utilities.Charset.US_ASCII));
+  
+        repo_FileKey = repo_FileKey.replace(/\W+/g, "");
         
-          if (markdown_Document.attachments && markdown_Document.attachments.length > 0) {
+        if (repo_FileKey) {
+        
+          var markdown_Document = ConvertToMarkdown(assets_Path, repo_FileKey);
+          if (markdown_Document) {
+            markdown_Document.contents = yaml_Metadata + "\n" + markdown_Document.contents;
+      
+            var repo_Path = targets[i].split("::")[1];
+            var file = postCommit(repo_Name, repo_Path, repo_File, "Update/Create " + repo_File, Utilities.base64Encode(markdown_Document.contents));
           
-            for (var j = 0; j < markdown_Document.attachments.length; j++) {
-              postCommit(repo_Name, assets_Path, markdown_Document.attachments[j].fileName, 
-                "Update/Create " + markdown_Document.attachments[j].fileName, 
-                Utilities.base64Encode(markdown_Document.attachments[j].content));
+            if (markdown_Document.attachments && markdown_Document.attachments.length > 0) {
+            
+              for (var j = 0; j < markdown_Document.attachments.length; j++) {
+                postCommit(repo_Name, assets_Path, markdown_Document.attachments[j].fileName, 
+                  "Update/Create " + markdown_Document.attachments[j].fileName, 
+                  Utilities.base64Encode(markdown_Document.attachments[j].content));
+              }
+          
             }
-        
           }
+          
         }
       }
     }
