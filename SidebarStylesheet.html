@@ -40,10 +40,6 @@ button {
   min-width: 100px;
 }
 
-button.inflow {
-  margin-top: 0.25em;
-}
-
 .width-100 {
   width: 100%;
   box-sizing: border-box;
@@ -115,16 +111,21 @@ ul.expandable li:before {
   position: relative;
   border-color: transparent #111;
   border-width: 0.35em 0 0.35em 0.45em;
-  -webkit-transition: all 0.15s ease-out;
-  -moz-transition: all 0.15s ease-out;
-  -o-transition: all 0.15s ease-out;
-  transition: all 0.15s ease-out;
+  -webkit-transition: all 0.5s ease-in-out;
+  -moz-transition: all 0.5s ease-in-out;
+  -o-transition: all 0.5s ease-in-out;
+  transition: all 0.5s ease-in-out;
+}
+
+ul.expandable li.loading:before { 
+  border-color: transparent;
 }
 
 ul.expandable li.empty:before {
   border-color: transparent #F00;
 }
 
+/*
 ul.expandable li:hover:before {
   border-color: transparent #aaa;
   -webkit-transform:rotate(90deg);
@@ -132,6 +133,7 @@ ul.expandable li:hover:before {
   -o-transform:rotate(90deg);
   transform:rotate(90deg);
 }
+*/
 
 ul.expandable li.empty:hover:before {
   border-color: transparent #F77;
@@ -144,4 +146,52 @@ ul.expandable li.expanded:before {
   transform:rotate(90deg);
 }
 
+.width-75 {
+  width: 75%;
+}
+
+.width-100 {
+  width: 100%;
+}
+    
+.required, .err {
+  color: #cc0000;
+}
+
+.logo-image {
+	width: 50px;
+	height: 50px;
+    float: right;
+}
+
+.highlighted {
+  color: #00FF00;
+}
+
+.user {
+  display: inline-block;
+  font-weight: 600;
+  padding: 0.2em 0.3em 0.2em 0.3em;
+  font-size: 115%;
+  color: #FFFFFF;
+  background-color: #222222;
+}
+
+#sidebar-clearcommits-button {
+  margin-left: 0.4em;
+}
+
+#sidebar-status, input[type="text"] {
+  display: block;
+}
+
+#sidebar-save-button {
+  margin-top: 0.7em;
+  margin-bottom: 0.4em;
+}
+
+.help {
+  display: none;
+  margin-bottom: 0.5em;
+}
 </style>
