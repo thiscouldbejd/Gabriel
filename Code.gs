@@ -10,20 +10,42 @@
 function showSidebar() {
   var github = getGithub();
   if (!github.hasAccess()) {
-    var authorizationUrl = github.getAuthorizationUrl();
-    var template = HtmlService.createTemplate(
-        '<a href="<?= authorizationUrl ?>" target="_blank">Authorize</a>. ' +
-        'Reopen the sidebar when the authorization is complete.');
-    template.authorizationUrl = authorizationUrl;
-    var page = template.evaluate();
-    DocumentApp.getUi().showSidebar(page);
+    showGithubAuthFlow(github);
   } else {
-    var ui = HtmlService.createTemplateFromFile('Sidebar')
+    var page = HtmlService.createTemplateFromFile("Sidebar")
       .evaluate()
       .setTitle(c.title)
       .setSandboxMode(HtmlService.SandboxMode.IFRAME);
-    DocumentApp.getUi().showSidebar(ui);
+    DocumentApp.getUi().showSidebar(page);
   }
+}
+
+function reAuthorise() {
+  var github = getGithub();
+  github.reset();
+  showGithubAuthFlow(github);
+}
+
+function showGithubAuthFlow(github) {
+  var authorizationUrl = github.getAuthorizationUrl();
+  var template = HtmlService.createTemplateFromFile("PreAuthSidebar");
+  template.authorizationUrl = authorizationUrl;
+  var page = template
+              .evaluate()
+              .setTitle(c.title)
+              .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  DocumentApp.getUi().showSidebar(page);
+}
+
+function showHelp() {
+  var template = HtmlService.createTemplateFromFile("AboutDialog");
+  var page = template
+              .evaluate()
+              .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+              .setWidth(500)
+              .setHeight(300);
+  DocumentApp.getUi()
+      .showModalDialog(page, "About Gabriel");
 }
 
 /**
@@ -31,155 +53,17 @@ function showSidebar() {
  */
 function clearData() {
   var ui = DocumentApp.getUi();
-  var response = ui.alert("Clear Information about this document?", "You will lose all the information you've edited in the sidebar, but your document will remain exactly as it is.", ui.ButtonSet.YES_NO)
+  var response = ui.alert("Clear details about this document?", "All details in the sidebar will be cleared, but nothing in your document will change.", ui.ButtonSet.YES_NO)
   
-  if (response && response == "YES") clearPrefixedProperties(PropertiesService.getDocumentProperties(), c, "data_");
+  if (response && response == "YES") {
+    clearPrefixedProperties(PropertiesService.getDocumentProperties(), c, "data_");
+    showSidebar();
+  }
 }
 // == Menu Handlers == //
 
 
 // == Data Handlers == //
-
-// -- Post Title -- //
-/**
- * Returns the post title.
- *
- * @return {String} the current post title.
- */
-function getTitle() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_title, DocumentApp.getActiveDocument().getName());
-}
-
-/**
- * Changes the post title.
- *
- * @param {String} value the new title to use for the post.
- */
-function setTitle(value) {
-  if (value != DocumentApp.getActiveDocument().getName()) 
-    setScalarProperty(PropertiesService.getDocumentProperties(), c.data_title, value);
-}
-// -- Post Title -- //
-
-// -- File Name -- //
-/**
- * Returns the post file name.
- *
- * @return {String} the current post file name.
- */
-function getFileName() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_filename);
-}
-
-/**
- * Changes the post file name.
- *
- * @param {String} value the new file name to use for the post.
- */
-function setFileName(value) {
-  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_filename, value);
-}
-// -- File Name -- //
-
-// -- Post Permalink -- //
-/**
- * Returns the post permalink.
- *
- * @return {String} the current post permalink.
- */
-function getPermalink() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_link);
-}
-
-/**
- * Changes the post permalink.
- *
- * @param {String} value the new permalink to use for the post.
- */
-function setPermalink(value) {
-  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_link, value);
-}
-// -- Post Permalink -- //
-
-// -- Post Type -- //
-/**
- * Returns the post type.
- *
- * @return {String} the current post type.
- */
-function getType() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_type, "post");
-}
-
-/**
- * Changes the post type.
- *
- * @param {String} value the new type to use for the post.
- */
-function setType(value) {
-  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_type, value);
-}
-// -- Post Type -- //
-
-// -- Post Author -- //
-/**
- * Returns the post author.
- *
- * @return {String} the current post author.
- */
-function getAuthor() {
-  return getScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, Session.getEffectiveUser().getEmail().split("@")[0]);
-}
-
-/**
- * Changes the post author.
- *
- * @param {String} value the new author to use for the post.
- */
-function setAuthor(value) {
-  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, value);
-}
-// -- Post Author -- //
-
-// -- Post Tags -- //
-/**
- * Returns the post tags.
- *
- * @return {Array} the current post tags.
- */
-function getTags() {
-  return getArrayProperty(PropertiesService.getDocumentProperties(), c.data_tags);
-}
-
-/**
- * Changes the post tags.
- *
- * @param {Array} values the new tags to use for the post.
- */
-function setTags(values) {
-  setArrayProperty(PropertiesService.getDocumentProperties(), c.data_tags, values);
-}
-// -- Post Tags -- //
-  
-// -- Post Targets -- //
-/**
- * Returns the post targets (e.g. a destination for the post/file).
- *
- * @return {Array} the current post targets.
- */
-function getTargets() {
-  return getArrayProperty(PropertiesService.getDocumentProperties(), c.data_targets);
-}
-
-/**
- * Changes the post targets (e.g. a destination for the post/file).
- *
- * @param {Array} values the new targets to use for the post.
- */
-function setTargets(values) {
-  setArrayProperty(PropertiesService.getDocumentProperties(), c.data_targets, values);
-}
-// -- Post Targets -- //
 
 // -- User Tags -- //
 /**
@@ -201,12 +85,52 @@ function setAllTags(values) {
 }
 // -- User Tags -- //
 
+// -- Post Meta -- //
+/**
+ * Returns the post meta data.
+ *
+ * @return {Object} the current post metadata.
+ */
+function getMeta() {
+  var value = {};
+  
+  value.tags = getArrayProperty(PropertiesService.getDocumentProperties(), c.data_tags);
+  value.title = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_title, DocumentApp.getActiveDocument().getName());
+  value.filename = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_filename, new Date().toISOString().split("T")[0] + "-" + value.title.split(" ").join("-") + ".md");
+  value.link = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_link, "/" + value.title.toLowerCase().split(" ").join("-") + "/");
+  value.author = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, Session.getEffectiveUser().getEmail().split("@")[0]);
+  value.type = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_type, "post");
+  value.targets = getArrayProperty(PropertiesService.getDocumentProperties(), c.data_targets);
+  
+  return value;
+}
+
+/**
+ * Changes the post meta data.
+ *
+ * @param {Object} values the new metadata to use for the post.
+ */
+function setMeta(value) {
+  
+  setArrayProperty(PropertiesService.getDocumentProperties(), c.data_tags, value.tags);
+  if (value.title != DocumentApp.getActiveDocument().getName()) 
+    setScalarProperty(PropertiesService.getDocumentProperties(), c.data_title, value.title);
+  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_filename, value.filename);
+  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_link, value.link);
+  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_author, value.author);
+  setScalarProperty(PropertiesService.getDocumentProperties(), c.data_type, value.type);
+  setArrayProperty(PropertiesService.getDocumentProperties(), c.data_targets, value.targets);
+  
+}
+// -- Post Tags -- //
+
 // == Data Handlers == //
 
 // == Action Handlers == //
 function commitToGithub(yaml_Metadata) {
 
-    var targets = getTargets();
+    var targets = getArrayProperty(PropertiesService.getDocumentProperties(), c.data_targets);
+    
     if (targets && targets.length > 0) {
       for (var i = 0; i < targets.length; i++) {
       
@@ -222,7 +146,7 @@ function commitToGithub(yaml_Metadata) {
           if (config_Doc[c.defaults_ymlAssetPathKey]) assets_Path = config_Doc[c.defaults_ymlAssetPathKey];
         }
         
-        var repo_File = getFileName();
+        var repo_File = getScalarProperty(PropertiesService.getDocumentProperties(), c.data_filename);
         var repo_FileKey = Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, repo_File, Utilities.Charset.US_ASCII));
   
         repo_FileKey = repo_FileKey.replace(/\W+/g, "");
