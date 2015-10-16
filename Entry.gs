@@ -26,6 +26,6 @@ function onOpen(e) {
 function createMenu(ui) {
   ui.createAddonMenu()
     .addItem("Start Publishing", "showSidebar")
-    .addItem("Clear Document Info", "clearData")
+    .addItem("About Gabriel", "showHelp")
     .addToUi();
 }
