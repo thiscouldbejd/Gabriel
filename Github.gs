@@ -1,6 +1,5 @@
 function getGithub() {
-
-  return OAuth2.createService('github')
+  return OAuth2.createService("github")
     .setAuthorizationBaseUrl(c.github_authUrl)
     .setTokenUrl(c.github_tokenUrl)
     .setClientId(c.github_clientID)
@@ -17,6 +16,24 @@ function authCallback(request) {
     return HtmlService.createHtmlOutput('Success! You can close this tab.');
   } else {
     return HtmlService.createHtmlOutput('Denied. You can close this tab');
+  }
+}
+
+function getMe() {
+  var response =  UrlFetchApp.fetch(c.github_serviceUrl + "/user", {
+     method : "GET",
+     contentType : "application/json",
+     headers : {
+       Accept : c.github_accept,
+       Authorization: "token " + getGithub().getAccessToken()
+     }
+  });
+  if (response.getResponseCode() == 200) {
+    var user = JSON.parse(response.getContentText());
+    return {
+      username: user.login,
+      name: user.name
+    };
   }
 }
 
