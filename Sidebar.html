@@ -44,22 +44,24 @@
       <label for="tags">Tags: </label><a class="trigger-help" for="tags" href="#" title="Show More Details ...">?</a>
       <div id="tags-help" class="gray help">The tag list, from which you can select words to tag this post with, is saved per user so please type in a tag you wish to save and press enter.</div>
       <ul id="tags"></ul>
+      <button class="small-button" id="sidebar-add-tag" title="Click to add to the list, or just press 'Enter'">Add</button>
       <input type="text" class="width-75" id="new-tag"></input>
     </div>
-    <div class="block form-group">
+    <div class="block form-group padded">
       <label for="repos" class="required">Your GitHub Repos:</label>
       <ul class="expandable" id="repos"></ul>
     </div>
-    <div class="block form-group">
+    <div id="commit-to-repos-block" class="block form-group padded">
       <div class="block">
       <label for="commit-to-repos">Commit To:</label>
-      <button id="sidebar-clearcommits-button">Clear All</button>
+      <button id="sidebar-clearcommits-button" class="medium-button">Clear All</button>
       </div>
       <ul class="width-100 readonly" id="commit-to-repos"></ul>
     </div>
     <div class="block" id="sidebar-button-bar">
-      <button class="action" id="sidebar-save-button">Publish</button>
-      <button id="sidebar-clear-button">Clear</button>
+      <button class="medium-button" id="sidebar-save-button" title="Save all the above without publishing">Save</button>
+      <button class="medium-button" id="sidebar-clear-button" title="Clear all the above to defaults">Clear</button>
+      <button class="action" id="sidebar-publish-button" title="Save all the above and Publish to Github">Publish</button>
       <label id="sidebar-status" for="sidebar-save-button"></label>
     </div>
 </div>
