@@ -1,3 +1,8 @@
+// ** GitScript **
+// GitScript.Repo: Gabriel
+// GitScript.File: Github.gs
+// ** GitScript **
+
 function getGithub() {
   return OAuth2.createService("github")
     .setAuthorizationBaseUrl(c.github_authUrl)
@@ -95,7 +100,8 @@ function getFolders(repo_Name, path) {
 }
 
 function getFile(repo_Name, path, fileName) {
-  var url = c.github_serviceUrl + "/repos/" + repo_Name + "/contents/" + path + "/" + fileName;
+  var p = path ? path + "/":"";
+  var url = c.github_serviceUrl + "/repos/" + repo_Name + "/contents/" + p + fileName;
   var response =  UrlFetchApp.fetch(url, {
      method : "GET",
      muteHttpExceptions : true,
@@ -115,7 +121,8 @@ function getFile(repo_Name, path, fileName) {
 function postCommit(repo_Name, path, fileName, message, value, branch) {
   var existing_File = getFile(repo_Name, path, fileName);
   
-  var url = c.github_serviceUrl + "/repos/" + repo_Name + "/contents/" + path + "/" + fileName;
+  var p = path ? path + "/":"";
+  var url = c.github_serviceUrl + "/repos/" + repo_Name + "/contents/" + p + fileName;
   var put_Payload = {};
   if (branch) put_Payload.branch = branch;
   if (existing_File) put_Payload.sha = existing_File.sha;
