@@ -5,22 +5,8 @@
    * Run initializations on dialog load.
    */
   $(function() {
-      google.script.run
-      .withSuccessHandler(function(user) {
-        if (user && user.username) {
-          $("#auth").prepend($("<span/>").addClass("user").text(user.username));
-          $("#lead-in").show();
-          $(".authorised").show();
-        } else {
-          $("#lead-in").hide();
-          $(".authorised").hide();
-        }
-      })
-      .getMe();
-      
-      $("#sidebar-reauth-button").click(function() {
-        google.script.run
-        .reAuthorise();
+      $("#dialog-close-button").click(function() {
+        google.script.host.close();
       });
   });
 </script>
