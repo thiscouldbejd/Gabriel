@@ -37,13 +37,24 @@ function showGithubAuthFlow(github) {
   DocumentApp.getUi().showSidebar(page);
 }
 
-function showHelp() {
+function showAuthorisation() {
+  var template = HtmlService.createTemplateFromFile("AuthorisationDialog");
+  var page = template
+              .evaluate()
+              .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+              .setWidth(500)
+              .setHeight(270);
+  DocumentApp.getUi()
+      .showModalDialog(page, "Authorising Gabriel");
+}
+
+function showAbout() {
   var template = HtmlService.createTemplateFromFile("AboutDialog");
   var page = template
               .evaluate()
               .setSandboxMode(HtmlService.SandboxMode.IFRAME)
               .setWidth(500)
-              .setHeight(300);
+              .setHeight(320);
   DocumentApp.getUi()
       .showModalDialog(page, "About Gabriel");
 }
@@ -169,6 +180,8 @@ function commitToGithub(yaml_Metadata) {
               }
           
             }
+            
+            if (file) return file.content.html_url;
           }
           
         }
