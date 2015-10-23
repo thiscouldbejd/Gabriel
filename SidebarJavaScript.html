@@ -72,7 +72,7 @@
     google.script.run
       .withSuccessHandler(function(user) {
         if (user && user.username) {
-          $("#header").prepend($("<span/>").addClass("user").text(user.username));
+          $("#header").prepend($("<span/>").addClass("user").text(user.username).click(function () {google.script.run.showAuthorisation();}));
           $("#lead-in").show();
         } else {
           $("#lead-in").hide();
@@ -260,23 +260,34 @@
   
   function afterPublishFailure(err) {
     showStatus("Failed to Publish", "failure", err.message);
+    $("#sidebar-status-details").empty();
     $("#sidebar-publish-button").removeAttr("disabled");
   }
   
   function afterSaveSuccess(successfulChainFunctions, failedChainFunction) {
     showStatus("Successfully Saved!", "success");
+    $("#sidebar-status-details").empty();
     $("#sidebar-save-button").removeAttr("disabled");
   }
   
   function afterSaveFailure(err) {
     showStatus("Failed to Save", "failure", err.message);
+    $("#sidebar-status-details").empty();
     $("#sidebar-save-button").removeAttr("disabled");
   }
   
   function commitDocument(successfulChainFunctions, failedChainFunction) {
     google.script.run
-      .withSuccessHandler(function() {
+      .withSuccessHandler(function(url) {
       
+        if (url) {
+          $("#sidebar-status-details").append(
+            $("<span />").text("View your published ")
+          ).append(
+            $("<a />").text("document here").attr("href", url).attr("target", "_blank")
+          );
+        }
+        
         // -- Continue the Chain -- //
         if (successfulChainFunctions && successfulChainFunctions.length > 0) {
           var successfulChainFunction = successfulChainFunctions.shift();
