@@ -166,16 +166,15 @@ function commitToGithub(yaml_Metadata) {
         
           var markdown_Document = ConvertToMarkdown(assets_Path, repo_FileKey);
           if (markdown_Document) {
-            markdown_Document.contents = yaml_Metadata + "\n" + markdown_Document.contents;
-      
+            markdown_Document.contents = yaml_Metadata + "\n" + markdown_Document.contents;        
             var repo_Path = targets[i].split("::")[1];
-            var file = postCommit(repo_Name, repo_Path, repo_File, "Update/Create " + repo_File, Utilities.base64Encode(markdown_Document.contents));
+            var file = postCommit(repo_Name, repo_Path, repo_File, "Update/Create " + repo_File, Utilities.base64Encode(markdown_Document.contents, Utilities.Charset.UTF_8));
             
             if (markdown_Document.attachments && markdown_Document.attachments.length > 0) {
             
               for (var j = 0; j < markdown_Document.attachments.length; j++) {
                 postCommit(repo_Name, assets_Path, markdown_Document.attachments[j].fileName, 
-                  "Update / Create " + markdown_Document.attachments[j].fileName, 
+                  "Update/Create " + markdown_Document.attachments[j].fileName, 
                   Utilities.base64Encode(markdown_Document.attachments[j].content));
               }
           
