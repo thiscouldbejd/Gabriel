@@ -260,19 +260,16 @@
   
   function afterPublishFailure(err) {
     showStatus("Failed to Publish", "failure", err.message);
-    $("#sidebar-status-details").empty();
     $("#sidebar-publish-button").removeAttr("disabled");
   }
   
   function afterSaveSuccess(successfulChainFunctions, failedChainFunction) {
     showStatus("Successfully Saved!", "success");
-    $("#sidebar-status-details").empty();
     $("#sidebar-save-button").removeAttr("disabled");
   }
   
   function afterSaveFailure(err) {
     showStatus("Failed to Save", "failure", err.message);
-    $("#sidebar-status-details").empty();
     $("#sidebar-save-button").removeAttr("disabled");
   }
   
@@ -310,6 +307,7 @@
    *   should be displayed as.
    */
   function showStatus(msg, classId, details) {
+    if (!msg) $("#sidebar-status-details").empty();
     $('#sidebar-status').removeClass().html(msg);
     if (details) {
       $('#sidebar-status').attr("title", details);
