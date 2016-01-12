@@ -1,4 +1,3 @@
-/*
 Copyright 2013 Google Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +19,7 @@ Modifications made to code to:
 - add assets_Path parameter to 'ConvertToMarkdown' function and into processParagraph, allowing image paths in Jekyll;
 - add assets_Namespace parameter to 'ConvertToMarkdown' and into processParagraph, ensuring no namespace clashes when adding image assets;
 - replacing apostrophes / single-quotation marks
+- changed image handling to include 'safe' name & use .copy()
 
 Original version can be found at: https://github.com/mangini/gdocs2md
 */
@@ -145,7 +145,9 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters, ass
       textElements.push(txt);
     } else if (t === DocumentApp.ElementType.INLINE_IMAGE) {
       result.images = result.images || [];
-      var contentType = element.getChild(i).getBlob().getContentType();
+      var img = element.getChild(i).copy();
+      // image/png
+      var contentType = img.getBlob().getContentType();
       var extension = "";
       if (/\/png$/.test(contentType)) {
         extension = ".png";
@@ -160,7 +162,7 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters, ass
       imageCounter++;
       textElements.push('![image alt text](' + assets_Path + name + ')');
       result.images.push( {
-        "bytes": element.getChild(i).getBlob().getBytes(), 
+        "bytes": img.getBlob().getBytes(), 
         "type": contentType, 
         "name": name});
     } else if (t === DocumentApp.ElementType.PAGE_BREAK) {
