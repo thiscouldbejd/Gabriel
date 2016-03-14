@@ -25,4 +25,4 @@ It is licensed under version 2.0 of the Apache License and contains code (thanks
 
 The __logo__ incorporates the [Markdown Mark](https://github.com/dcurtis/markdown-mark) which is licensed under the Creative Commons License (CC0 UNIVERSAL PUBLIC DOMAIN DEDICATION LICENSE).
 
-All else, __Copyright JD, 2015__.
+All else, __Copyright JD, 2015-16__.
