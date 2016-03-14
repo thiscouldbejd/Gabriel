@@ -1,0 +1,108 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script>
+
+  $("#dialog-save-button").attr("disabled","disabled");
+
+  // Handler for Change Checkbox Function (keeping track of hidden repos!)
+  $(document).on("change", "input[type='checkbox'].repos", onRepoCheckChange);
+    
+  /**
+   * Run initializations on dialog load.
+   */
+  $(function() {
+  
+      // Hack to remove Overflow-Y scrollbar in Chrome
+      // See - https://code.google.com/p/google-apps-script-issues/issues/detail?id=5164
+      parent.document.getElementById("userHtmlFrame").style.overflowY = "hidden";
+    
+      loadHiddenRepos([loadRepos]);
+      
+      $("#dialog-save-button").click(function() {
+        google.script.run
+          .withSuccessHandler(function() {
+          
+            // -- Show Success -- //
+            $("#dialog-save-button").attr("disabled","disabled");
+            
+          })
+          .withFailureHandler(function(err) {
+          
+            // -- Show Failure -- //
+          
+          })
+          .withUserObject(this)
+          .setHiddenRepos(hidden_Repos);
+      });
+      
+      $("#dialog-restore-button").click(function() {
+        hidden_Repos = [];
+        loadRepos([$("#dialog-save-button").removeAttr("disabled")]);
+      });
+      
+      $("#dialog-close-button").click(function() {
+        google.script.host.close();
+      });
+  });
+  
+  var hidden_Repos = [];
+  
+  function loadHiddenRepos(successfulChainFunctions) {
+    google.script.run
+      .withSuccessHandler(function(repos) {
+      
+        hidden_Repos = repos;
+        
+        if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+          successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+        
+      })
+      .getHiddenRepos();
+  }
+  
+  function loadRepos(successfulChainFunctions) {
+    showLoading($("#repos"), "Repos");
+    google.script.run
+      .withSuccessHandler(function(repos, element) {
+          element.empty();
+          if (!repos || repos.length == 0) {
+            $("<div/>")
+              .append($("<span/>").addClass("err").text("You don't have any repos! "))
+              .append($("<span/>").addClass("gray").text("You'll need to create one before publishing anything."))
+              .appendTo(element);
+          } else {
+            for (var i = 0; i < repos.length; i++) {
+              $("<li/>")
+                .data("path", "")
+                .data("repo_name", repos[i].fullname)
+                .append($("<input />").addClass("repos").attr("type","checkbox").attr("checked", !(hidden_Repos.indexOf(repos[i].fullname) >= 0)).text(repos[i].name))
+                .append($("<span />").text(repos[i].name))
+                .appendTo(element);
+            }
+          }
+          
+          if (successfulChainFunctions && successfulChainFunctions.length > 0) 
+            successfulChainFunctions.shift()(successfulChainFunctions); // -- Continue the Chain -- //
+        })
+      .withUserObject($("#repos"))
+      .getRepos();
+  }
+  
+  function onRepoCheckChange() {
+    var parent = $(this).parent();
+    var data = parent.data("repo_name");
+    if(!this.checked) {
+      hidden_Repos.push(data);
+    } else {
+      var index = hidden_Repos.indexOf(data);
+      if (index > -1) hidden_Repos.splice(index, 1);
+    }
+    $("#dialog-save-button").removeAttr("disabled");
+  }
+  
+  function showLoading(element, what) {
+    element.empty();
+    var message = "Loading ";
+    if (what) message = message + what + " ";
+    $("<li/>").addClass("loading").text(message += "...").appendTo(element);
+  }
+</script>
