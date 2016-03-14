@@ -37,6 +37,17 @@ function showGithubAuthFlow(github) {
   DocumentApp.getUi().showSidebar(page);
 }
 
+function showRepos() {
+  var template = HtmlService.createTemplateFromFile("RepoDialog");
+  var page = template
+              .evaluate()
+              .setSandboxMode(HtmlService.SandboxMode.IFRAME)
+              .setWidth(500)
+              .setHeight(270);
+  DocumentApp.getUi()
+      .showModalDialog(page, "Manage Visibility of Github Repositories");
+}
+
 function showAuthorisation() {
   var template = HtmlService.createTemplateFromFile("AuthorisationDialog");
   var page = template
@@ -96,6 +107,28 @@ function setAllTags(values) {
 }
 // -- User Tags -- //
 
+// -- User Hidden Repos -- //
+/**
+ * Returns the user tags.
+ *
+ * @return {Array} the current user tags.
+ */
+function getHiddenRepos() {
+  return getArrayProperty(PropertiesService.getUserProperties(), c.user_hiddenRepos);
+}
+
+/**
+ * Changes the user tags.
+ *
+ * @param {Array} values the new tags to use for the user.
+ */
+function setHiddenRepos(values) {
+  setArrayProperty(PropertiesService.getUserProperties(), c.user_hiddenRepos, values);
+}
+
+
+// -- User Hidden Repos -- //
+
 // -- Post Meta -- //
 /**
  * Returns the post meta data.
@@ -136,6 +169,46 @@ function setMeta(value) {
 // -- Post Tags -- //
 
 // == Data Handlers == //
+
+// == Show Handlers == //
+function getFilteredRepos() {
+  var repos = getRepos();
+  var hiddenRepos = getHiddenRepos();
+  
+  if (repos && hiddenRepos) {
+  
+    var repos_L = repos.length;
+    var hiddenRepos_L = hiddenRepos.length;
+    
+    for (var i = 0; i < repos_L; i++) {
+    
+      if (hiddenRepos_L == 0) break;
+      
+      for (var j = 0; j < hiddenRepos_L; j++) {
+      
+        if (repos[i]["fullname"] == hiddenRepos[j]) {
+          
+          repos.splice(i, 1);
+          i -= 1;
+          repos_L -= 1;
+          
+          hiddenRepos.splice(j, 1);
+          hiddenRepos_L -= 1;
+          
+          break;
+        }
+      
+      }
+      
+    }
+    
+  }
+  
+  return repos;
+  
+}
+
+// == Show Handlers == //
 
 // == Action Handlers == //
 function commitToGithub(yaml_Metadata) {
