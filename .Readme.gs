@@ -189,7 +189,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright 2015 JD
+   Copyright 2015-16 JD
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -213,6 +213,14 @@
 // == Version History == //
 
 /*
+v1.0.7 [2016-03-14]
+    - Added new Repository Visibility Selector
+v1.0.6 [2016-01-12]
+    - Bugfixes (see Issue log)
+v1.0.5 [2015-10-23]
+    - Various UI Improvements from feedback
+v1.0.4 [2015-10-21]
+    - Various UI Improvements from feedback
 v1.0.3 [2015-09-25]
     - Various minor bugfixes - see Github Issues Tracker
 v1.0.2 [2015-09-19]
