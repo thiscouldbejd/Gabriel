@@ -16,6 +16,7 @@ var c = {
   data_author : "OUTPUT_AUTHOR",
   data_tags : "OUTPUT_TAGS",
   user_tags : "USER_TAGS",
+  user_hiddenRepos : "USER_HIDDEN_REPOS",
   defaults_ymlConfig : "_config.yml",
   defaults_assetPath : "public",
   defaults_ymlAssetPathKey : "post_assets",
