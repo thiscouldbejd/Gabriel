@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile("DialogStylesheet").getContent(); ?>
+  </head>
+  <body>
+    <div id="root">
+      <span>If you would like to <strong>hide</strong> certain repositories from appearing in the Gabriel sidebar (as targets for publication) then <strong>de-tick them</strong> here and press <strong>save</strong> at the bottom.</span>
+      <ul id="repos"></ul>
+      <div class="block">
+        <button class="action" id="dialog-save-button">Save</button>
+        <button id="dialog-restore-button">Restore All</button>
+        <button id="dialog-close-button">Close</button>
+      </div>
+    </div>
+    <?!= HtmlService.createHtmlOutputFromFile("RepoDialogJavaScript").getContent(); ?>
+  </body>
+</html>
