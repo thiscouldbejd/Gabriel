@@ -1,3 +1,9 @@
+// ** GitScript **
+// GitScript.Repo: Gabriel
+// GitScript.File: Markdown.gs
+// ** GitScript **
+
+/*
 Copyright 2013 Google Inc. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +21,8 @@ limitations under the License.
 
 /*
 Modifications made to code to:
+- Added support for Github-flavoured Markdown with strikethrough.
+- Added check for formatting only whitespace characters (removed formatting!)
 - remove emailing sections in 'ConvertToMarkdown' function;
 - add assets_Path parameter to 'ConvertToMarkdown' function and into processParagraph, allowing image paths in Jekyll;
 - add assets_Namespace parameter to 'ConvertToMarkdown' and into processParagraph, ensuring no namespace clashes when adding image assets;
@@ -162,8 +170,8 @@ function processParagraph(index, element, inSrc, imageCounter, listCounters, ass
       imageCounter++;
       textElements.push('![image alt text](' + assets_Path + name + ')');
       result.images.push( {
-        "bytes": img.getBlob().getBytes(), 
-        "type": contentType, 
+        "bytes": img.getBlob().getBytes(),
+        "type": contentType,
         "name": name});
     } else if (t === DocumentApp.ElementType.PAGE_BREAK) {
       // ignore
@@ -274,6 +282,7 @@ function processTextElement(inSrc, txt) {
   var lastOff=pOut.length;
 
   for (var i=attrs.length-1; i>=0; i--) {
+  
     var off=attrs[i];
     var url=txt.getLinkUrl(off);
     var font=txt.getFontFamily(off);
@@ -295,17 +304,32 @@ function processTextElement(inSrc, txt) {
         pOut=pOut.substring(0, off)+'`'+pOut.substring(off, lastOff)+'`'+pOut.substring(lastOff);
       }
     }
-    if (txt.isBold(off)) {
-      var d1 = d2 = "**";
-      if (txt.isItalic(off)) {
-        // edbacher: changed this to handle bold italic properly.
-        d1 = "**_"; d2 = "_**";
+    
+    if (lastOff && !isEmpty(pOut.substring(off, lastOff))) {
+    
+      if (txt.isBold(off)) {
+        var d1 = d2 = "**";
+        if (txt.isItalic(off)) {
+          d1 += "_"; d2 = "_" + d2;
+        }
+        if (txt.isStrikethrough(off)) {
+          d1 += "~~"; d2 = "~~" + d2;
+        }
+        pOut=pOut.substring(0, off)+d1+pOut.substring(off, lastOff)+d2+pOut.substring(lastOff);
+      } else if (txt.isStrikethrough(off)) {
+        pOut=pOut.substring(0, off)+'~~'+pOut.substring(off, lastOff)+'~~'+pOut.substring(lastOff);
+      } else if (txt.isItalic(off)) {
+        pOut=pOut.substring(0, off)+'*'+pOut.substring(off, lastOff)+'*'+pOut.substring(lastOff);
       }
-      pOut=pOut.substring(0, off)+d1+pOut.substring(off, lastOff)+d2+pOut.substring(lastOff);
-    } else if (txt.isItalic(off)) {
-      pOut=pOut.substring(0, off)+'*'+pOut.substring(off, lastOff)+'*'+pOut.substring(lastOff);
+      
     }
-    lastOff=off;
+    
+    lastOff = off;
+    
   }
   return pOut;
+}
+
+function isEmpty(str) {
+    return str.replace(/^\s+|\s+$/gm,'').length == 0;
 }
