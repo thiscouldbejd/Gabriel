@@ -213,6 +213,8 @@
 // == Version History == //
 
 /*
+v1.0.8 [2016-05-30]
+    - Various bugfixes with Markdown parser
 v1.0.7 [2016-03-14]
     - Added new Repository Visibility Selector
 v1.0.6 [2016-01-12]
